@@ -55,6 +55,7 @@ class InvoicePrinter extends FPDF {
     public $type;
     public $reference;
     public $logo;
+    public $logoVerticalyCentered;
     public $color;
     public $badgeColor;
     public $date;
@@ -93,6 +94,7 @@ class InvoicePrinter extends FPDF {
         $this->currency = $currency;
         $this->maxImageDimensions = [230, 130];
         $this->dimensions         = [61.0, 34.0];
+        $this->logoVerticalyCentered = false;
         $this->from               = [''];
         $this->to                 = [''];
         $this->setLanguage($language);
@@ -136,7 +138,7 @@ class InvoicePrinter extends FPDF {
         list($width, $height) = getimagesize($image);
         $newWidth = $this->maxImageDimensions[0] / $width;
         $newHeight = $this->maxImageDimensions[1] / $height;
-        $scale = min($newWidth, $newHeight);
+        $scale = min($newWidth, $newHeight, 1);
 
         return [
             round($this->pixelsToMM($scale * $width)),
@@ -221,6 +223,10 @@ class InvoicePrinter extends FPDF {
         }
         $this->logo = $logo;
         $this->dimensions = $this->resizeToFit($logo);
+    }
+
+    public function setLogoVerticalyCentered() {
+        $this->logoVerticalyCentered = true;
     }
 
     public function hide_tofrom() {
@@ -420,7 +426,7 @@ class InvoicePrinter extends FPDF {
             $this->Image(
                 $this->logo,
                 $this->margins['l'],
-                $this->margins['t'],
+                ($this->logoVerticalyCentered ? $this->margins['t'] + ($this->pixelsToMM(130) - $this->dimensions[1]) / 2 : $this->margins['t']),
                 $this->dimensions[0],
                 $this->dimensions[1]
             );
