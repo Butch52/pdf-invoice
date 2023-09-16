@@ -296,6 +296,16 @@ class InvoicePrinter extends FPDF {
         ];
     }
 
+    public function customHeadersMax($key) {
+        $max = 0;
+        if (!empty($this->customHeaders)) {
+            foreach ($this->customHeaders as $value) {
+                $max = max($max, $this->GetStringWidth(mb_strtoupper($value[$key], self::ICONV_CHARSET_INPUT)));
+            }
+        }
+        return $max;
+    }
+
     public function addItem($item, $description, $quantity, $vat, $price, $discount, $total) {
         $itemColumns = 1;
 
@@ -431,11 +441,16 @@ class InvoicePrinter extends FPDF {
             - max(
                 $this->GetStringWidth(mb_strtoupper($this->lang['number'], self::ICONV_CHARSET_INPUT)),
                 $this->GetStringWidth(mb_strtoupper($this->lang['date'], self::ICONV_CHARSET_INPUT)),
-                $this->GetStringWidth(mb_strtoupper($this->lang['due'], self::ICONV_CHARSET_INPUT))
+                $this->GetStringWidth(mb_strtoupper($this->lang['time'], self::ICONV_CHARSET_INPUT)),
+                $this->GetStringWidth(mb_strtoupper($this->lang['due'], self::ICONV_CHARSET_INPUT)),
+                $this->customHeadersMax('title')
             )
             - max(
                 $this->GetStringWidth(mb_strtoupper((string)$this->reference, self::ICONV_CHARSET_INPUT)),
-                $this->GetStringWidth(mb_strtoupper((string)$this->date, self::ICONV_CHARSET_INPUT))
+                $this->GetStringWidth(mb_strtoupper((string)$this->date, self::ICONV_CHARSET_INPUT)),
+                $this->GetStringWidth(mb_strtoupper((string)$this->time, self::ICONV_CHARSET_INPUT)),
+                $this->GetStringWidth(mb_strtoupper((string)$this->due, self::ICONV_CHARSET_INPUT)),
+                $this->customHeadersMax('content')
             );
 
         //Number
