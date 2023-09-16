@@ -82,6 +82,7 @@ class InvoicePrinter extends FPDF {
     public $discountField;
     public $vatField;
     public $productsEnded;
+    public $flipflop;
     protected $displayToFromHeaders = true;
     protected $columns = 1;
 
@@ -533,7 +534,7 @@ class InvoicePrinter extends FPDF {
             $this->SetDrawColor($this->color[0], $this->color[1], $this->color[2]);
             $this->SetFont($this->font, 'B', 10);
             $width = ($this->document['w'] - $this->margins['l'] - $this->margins['r']) / 2;
-            if (isset($this->flipflop)) {
+            if (isset($this->flipflop) && $this->flipflop === true) {
                 $to = $this->lang['to'];
                 $from = $this->lang['from'];
                 $this->lang['to'] = $from;
